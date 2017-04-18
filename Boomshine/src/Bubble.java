@@ -16,12 +16,26 @@ public class Bubble extends Observable{
         this.middelpunt = middelpunt;
         this.straal = straal;
         this.kleur = kleur;
+        this.dx = dx;
+        this.dy = dy;
+    }
+
+    public Bubble(int straal, Color kleur, int dx, int dy)
+    {
+        this.middelpunt = new Point(30, 30);
+        this.straal = straal;
+        this.kleur = kleur;
+        this.dx = dx;
+        this.dy = dy;
     }
 
     public void move()
     {
         middelpunt.translate(dx, dy);
         //TODO: Gebruik middelpunt en straal om te laten stuiteren
+
+        setChanged();
+        notifyObservers();
     }
 
     public Point getMiddelpunt()
