@@ -12,16 +12,18 @@ public class BubbleView extends JPanel implements Observer {
     public BubbleView(Bubble bubble) {
         //setOpaque(false);
         setBackground(Color.cyan);
-        setSize(bubble.getStraal() * 2, bubble.getStraal() * 2);
+        //setSize(bubble.getStraal() * 2, bubble.getStraal() * 2);
         this.bubble = bubble;
         bubble.addObserver(this);
+
+        Dimension size = getPreferredSize();
+        setBounds(bubble.getMiddelpunt().x,
+                bubble.getMiddelpunt().y,
+                bubble.getStraal()*2, bubble.getStraal()*2);
     }
 
     public void draw(Graphics g) {
-        g.fillOval(bubble.getMiddelpunt().x,
-                bubble.getMiddelpunt().y,
-                bubble.getStraal(),
-                bubble.getStraal());
+        g.fillOval(0,0,bubble.getStraal() * 2,bubble.getStraal() * 2);
     }
 
     public void paintComponent(Graphics g) {
@@ -30,6 +32,8 @@ public class BubbleView extends JPanel implements Observer {
     }
 
     public void update(Observable obs, Object obj) {
-        repaint();
+        setBounds(bubble.getMiddelpunt().x,
+                bubble.getMiddelpunt().y,
+                bubble.getStraal() * 2, bubble.getStraal() * 2);
     }
 }

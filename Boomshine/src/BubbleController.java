@@ -26,7 +26,7 @@ public class BubbleController implements Runnable{
             bubble.move();
 
             try{
-                Thread.sleep(500);
+                Thread.sleep(1000 / BoomshineApplicatie.FPS);
             }
             catch(Exception e)
             {

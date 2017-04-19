@@ -18,21 +18,42 @@ public class Bubble extends Observable{
         this.kleur = kleur;
         this.dx = dx;
         this.dy = dy;
+
+        new BubbleController(this, true);
     }
 
     public Bubble(int straal, Color kleur, int dx, int dy)
     {
-        this.middelpunt = new Point(30, 30);
+        this.middelpunt = new Point(100, 100);
         this.straal = straal;
         this.kleur = kleur;
         this.dx = dx;
         this.dy = dy;
+
+        new BubbleController(this, true);
     }
 
     public void move()
     {
         middelpunt.translate(dx, dy);
-        //TODO: Gebruik middelpunt en straal om te laten stuiteren
+
+        if(middelpunt.x - getDiameter() <= 0) {
+            dx *= -1;
+            //middelpunt.x = 0;
+        }
+        else if(middelpunt.x + getDiameter() >= BoomshineApplicatie.WINDOW_WIDTH){
+            dx *= -1;
+            //middelpunt.x = BoomshineApplicatie.WINDOW_WIDTH;
+        }
+
+        if(middelpunt.y - getDiameter() <= 0) {
+            dy *= -1;
+            //middelpunt.y = 0;
+        }
+        else if(middelpunt.y + getDiameter() >= BoomshineApplicatie.WINDOW_HEIGHT){
+            dy *= -1;
+            //middelpunt.y = BoomshineApplicatie.WINDOW_HEIGHT;
+        }
 
         setChanged();
         notifyObservers();
@@ -46,5 +67,10 @@ public class Bubble extends Observable{
     public int getStraal()
     {
         return straal;
+    }
+
+    public int getDiameter()
+    {
+        return straal * 2;
     }
 }
