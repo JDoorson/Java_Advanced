@@ -37,22 +37,22 @@ public class Bubble extends Observable{
     {
         middelpunt.translate(dx, dy);
 
-        if(middelpunt.x - getDiameter() <= 0) {
+        if(middelpunt.x - getStraal() < 0) {
             dx *= -1;
-            //middelpunt.x = 0;
+            middelpunt.x = getStraal();
         }
-        else if(middelpunt.x + getDiameter() >= BoomshineApplicatie.WINDOW_WIDTH){
+        else if(middelpunt.x + getStraal() > BoomshineApplicatie.WINDOW_WIDTH){
             dx *= -1;
-            //middelpunt.x = BoomshineApplicatie.WINDOW_WIDTH;
+            middelpunt.x = BoomshineApplicatie.WINDOW_WIDTH - getStraal();
         }
 
-        if(middelpunt.y - getDiameter() <= 0) {
+        if(middelpunt.y - getStraal() < 0) {
             dy *= -1;
-            //middelpunt.y = 0;
+            middelpunt.y = getStraal();
         }
-        else if(middelpunt.y + getDiameter() >= BoomshineApplicatie.WINDOW_HEIGHT){
+        else if(middelpunt.y + getStraal() > BoomshineApplicatie.WINDOW_HEIGHT){
             dy *= -1;
-            //middelpunt.y = BoomshineApplicatie.WINDOW_HEIGHT;
+            middelpunt.y = BoomshineApplicatie.WINDOW_HEIGHT - getStraal();
         }
 
         setChanged();
@@ -72,5 +72,9 @@ public class Bubble extends Observable{
     public int getDiameter()
     {
         return straal * 2;
+    }
+
+    public Color getKleur(){
+        return kleur;
     }
 }
