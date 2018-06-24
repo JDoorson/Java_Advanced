@@ -1,20 +1,23 @@
 package whiteboard_client;
 
 import shared.messages.Message;
-import shared.messages.client.ClientMessage;
-import shared.messages.client.DrawingMessage;
 import shared.messages.client.InitialMessage;
+import shared.messages.client.StopMessage;
 import shared.model.User;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 
 public class WhiteboardClient extends Observable {
     private User user;
+    private List<User> users = new ArrayList<>();
     private Socket socket;
     private ObjectOutputStream oos;
+    private Input inputOption = Input.TEXT;
 
     /**
      * Instantiate a WhiteboardClient
@@ -46,6 +49,15 @@ public class WhiteboardClient extends Observable {
         }
     }
 
+    public void disconnect() {
+        sendMessage(new StopMessage(user));
+        try {
+            socket.close();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Send a message to the server
      * @param message The message being sent
@@ -60,10 +72,10 @@ public class WhiteboardClient extends Observable {
     }
 
     /**
-     * Handle a message received from the server
-     * @param message The message passed on to all observers
+     * Handle a ClientMessage received through the server.
+     * @param message The message to be passed on to all observers
      */
-    public void handleIncoming(ClientMessage message) {
+    public void handleIncomingMessage(Message message) {
         setChanged();
         notifyObservers(message);
     }
@@ -73,5 +85,13 @@ public class WhiteboardClient extends Observable {
      */
     public User getUser() {
         return user;
+    }
+
+    public Input getInputOption() {
+        return inputOption;
+    }
+
+    public void setInputOption(Input input) {
+        this.inputOption = input;
     }
 }

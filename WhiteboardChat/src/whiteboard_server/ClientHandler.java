@@ -1,6 +1,9 @@
 package whiteboard_server;
 
 import shared.messages.Message;
+import shared.messages.client.InitialMessage;
+import shared.messages.client.StopMessage;
+import shared.model.User;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -12,6 +15,7 @@ public class ClientHandler implements Runnable{
     private ObjectInputStream reader;
     private ObjectOutputStream writer;
     private WhiteboardServer server;
+    private User user;
 
     /**
      * Instantiate a ClientHandler.
@@ -40,7 +44,16 @@ public class ClientHandler implements Runnable{
         try {
             while((message = reader.readObject()) != null) {
                 System.out.println(String.format("Received: %s", message));
-                server.messageClients((Message)message);
+                if(message instanceof InitialMessage) {
+                    InitialMessage m = (InitialMessage)message;
+                    user = m.getSender();
+                    server.sendUserUpdate();
+                } else if(message instanceof StopMessage) {
+                    server.disconnectClient(this);
+                    server.sendUserUpdate();
+                } else {
+                    server.messageClients((Message) message);
+                }
             }
         } catch(ClassNotFoundException | IOException e) {
             e.printStackTrace();
@@ -58,5 +71,9 @@ public class ClientHandler implements Runnable{
         } catch(IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public User getUser() {
+        return user;
     }
 }

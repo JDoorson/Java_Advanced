@@ -2,6 +2,8 @@ package whiteboard_server;
 
 import shared.messages.Message;
 import shared.messages.client.DrawingMessage;
+import shared.messages.server.UsersMessage;
+import shared.model.User;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -46,6 +48,18 @@ public class WhiteboardServer {
         for(ClientHandler client : clients) {
             client.send(message);
         }
+    }
+
+    public void sendUserUpdate() {
+        List<User> users = new ArrayList<>();
+        for(ClientHandler c : clients) {
+            users.add(c.getUser());
+        }
+        messageClients(new UsersMessage(users));
+    }
+
+    public void disconnectClient(ClientHandler client) {
+        clients.remove(client);
     }
 
     public static void main(String[] args) {
