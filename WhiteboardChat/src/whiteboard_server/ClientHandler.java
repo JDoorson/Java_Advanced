@@ -22,7 +22,7 @@ public class ClientHandler implements Runnable {
      * @param socket The socket the client is connected to.
      * @param server The server instance.
      */
-    public ClientHandler(Socket socket, WhiteboardServer server) {
+    ClientHandler(Socket socket, WhiteboardServer server) {
         this.server = server;
         try {
             reader = new ObjectInputStream(socket.getInputStream());
@@ -30,8 +30,6 @@ public class ClientHandler implements Runnable {
 
             Thread t = new Thread(this);
             t.start();
-
-            System.out.println("A new client has connected");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -42,7 +40,6 @@ public class ClientHandler implements Runnable {
         Object message;
         try {
             while ((message = reader.readObject()) != null) {
-                System.out.println(String.format("Received: %s", message));
                 if (message instanceof InitialMessage) {
                     InitialMessage m = (InitialMessage) message;
                     user = m.getSender();

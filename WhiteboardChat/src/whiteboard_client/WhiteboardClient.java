@@ -8,13 +8,10 @@ import shared.model.User;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Observable;
 
 public class WhiteboardClient extends Observable {
     private User user;
-    private List<User> users = new ArrayList<>();
     private Socket socket;
     private ObjectOutputStream oos;
     private Input inputOption = Input.TEXT;
@@ -43,7 +40,6 @@ public class WhiteboardClient extends Observable {
         try {
             socket = new Socket(config.getHost(), config.getPort());
             oos = new ObjectOutputStream(socket.getOutputStream());
-            System.out.println(String.format("Network connection started on %s:%d", config.getHost(), config.getPort()));
         } catch (IOException e) {
             e.printStackTrace();
         }

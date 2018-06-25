@@ -46,14 +46,13 @@ public class WhiteboardServer {
      *
      * @param message The message to be sent.
      */
-    public void messageClients(Message message) {
-        System.out.println(String.format("Sending: <%s> to %d clients", message.toString(), clients.size()));
+    void messageClients(Message message) {
         for (ClientHandler client : clients) {
             client.send(message);
         }
     }
 
-    public void sendUserUpdate() {
+    void sendUserUpdate() {
         List<User> users = new ArrayList<>();
         for (ClientHandler c : clients) {
             users.add(c.getUser());
@@ -61,16 +60,15 @@ public class WhiteboardServer {
         messageClients(new UsersMessage(users));
     }
 
-    public void sendWhiteboard(ClientHandler client) {
-        System.out.println(String.format("Sending init list containing %d messages", messages.size()));
+    void sendWhiteboard(ClientHandler client) {
         client.send(new InitMessage(messages));
     }
 
-    public void disconnectClient(ClientHandler client) {
+    void disconnectClient(ClientHandler client) {
         clients.remove(client);
     }
 
-    public void addMessage(Message m) {
+    void addMessage(Message m) {
         messages.add(m);
     }
 

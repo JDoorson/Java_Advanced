@@ -77,8 +77,6 @@ public class WhiteboardView extends JFrame implements Observer {
             handleDrawingMessage((DrawingMessage) obj);
         } else if (obj instanceof UsersMessage) {
             handleUsersMessage((UsersMessage) obj);
-        } else {
-            System.out.println("Received a message that couldn't be handled");
         }
     }
 
@@ -89,41 +87,32 @@ public class WhiteboardView extends JFrame implements Observer {
      */
     private void handleDrawingMessage(DrawingMessage message) {
         Drawing drawing = message.getDrawing();
+        Graphics g = whiteboard.getGraphics();
 
         if (drawing instanceof TextDrawing) {
             TextDrawing d = (TextDrawing) message.getDrawing();
-            JLabel label = new JLabel(d.getText());
-            label.setSize(label.getPreferredSize());
-            label.setLocation(adjustCenter(d.getLocation(), label.getPreferredSize()));
-            label.setForeground(message.getSender().getColor());
-            whiteboard.add(label);
+            g.setColor(message.getSender().getColor());
+            g.drawString(d.getText(), (int)drawing.getLocation().getX(), (int)drawing.getLocation().getY());
         } else if (drawing instanceof Line) {
             Line l = (Line) drawing;
-//            JPanel panel = new JPanel() {
-//                @Override
-//                protected void paintComponent(Graphics g) {
-//                    super.paintComponent(g);
-//                    g.drawLine(10, 10, 10, 10);
-//                    System.out.println(String.format("Received %s -- Start: (%f,%f) -- End: (%f,%f)", message.getClass().getSimpleName(), l.getLocation().getX(), l.getLocation().getY(), l.getEnd().getX(), l.getEnd().getY()));
-//                }
-//            };
-            whiteboard.add(new LinePanel((int) l.getLocation().getX(), (int) l.getLocation().getY(), (int) l.getEnd().getX(), (int) l.getEnd().getY()));
-            //System.out.println(String.format("Received %s -- Start: (%f,%f) -- End: (%f,%f)", message.getClass().getSimpleName(), l.getLocation().getX(), l.getLocation().getY(), l.getEnd().getX(), l.getEnd().getY()));
-            //Graphics g = panel.getGraphics();
-            //g.drawLine((int)l.getLocation().getX(), (int)l.getLocation().getY(), (int)l.getEnd().getX(), (int)l.getEnd().getY());
+            g.setColor(message.getSender().getColor());
+            g.drawLine((int) l.getLocation().getX(), (int) l.getLocation().getY(), (int) l.getEnd().getX(), (int) l.getEnd().getY());
+            System.out.println(String.format("Received %s -- Start: (%f,%f) -- End: (%f,%f)", message.getClass().getSimpleName(), l.getLocation().getX(), l.getLocation().getY(), l.getEnd().getX(), l.getEnd().getY()));
         } else if (drawing instanceof Stamp) {
             Stamp s = (Stamp) message.getDrawing();
-            System.out.println(String.format("Received %s -- Currently unsupported", s.getClass().getSimpleName()));
-        } else {
-            System.out.println(String.format("Received illegal drawing: %s", drawing.getClass().getSimpleName()));
+            boolean[][] stamp = s.getStamp();
+            g.setColor(message.getSender().getColor());
+            for (int y = 0; y < stamp.length; y++) {
+                for (int x = 0; x < stamp[0].length; x++) {
+                    if(stamp[x][y]){
+                        g.fillRect( drawing.getLocation().x + y,drawing.getLocation().y + x, 1, 1);
+                    }
+                }
+            }
         }
-
-        // Display the new additions
-        repaint();
     }
 
     private void handleInitMessage(InitMessage message) {
-        System.out.println("Init loop");
         for (Message m : message.getMessages()) {
             if (!(m instanceof DrawingMessage)) {
                 continue;
@@ -162,7 +151,6 @@ public class WhiteboardView extends JFrame implements Observer {
 
         // Apply layout changes
         validate();
-        repaint();
     }
 
     /**
@@ -335,15 +323,7 @@ public class WhiteboardView extends JFrame implements Observer {
      *
      * @return The string present in the text field.
      */
-    public String getUserInput() {
+    String getUserInput() {
         return userInputField.getText();
-    }
-
-    /**
-     * Empties the text field.
-     */
-    public void clearUserInput() {
-        userInputField.setText("");
-        userInputField.requestFocus();
     }
 }

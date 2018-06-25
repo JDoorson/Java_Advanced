@@ -37,8 +37,6 @@ public class IncomingReader implements Runnable {
                 if (o instanceof Message) {
                     Message message = (Message) o;
                     client.handleIncomingMessage(message);
-                } else {
-                    System.out.println(String.format("Illegal message received: %s", o.getClass().getSimpleName()));
                 }
             }
         } catch (ClassNotFoundException | IOException e) {
