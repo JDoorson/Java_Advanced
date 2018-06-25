@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="WhiteboardClient:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/WhiteboardClient_jar</output-path>
+    <root id="archive" name="WhiteboardClient.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/src/resources/manifests/client/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="WhiteboardChat" />
+      <element id="dir-copy" path="$PROJECT_DIR$" />
+    </root>
+  </artifact>
+</component>
