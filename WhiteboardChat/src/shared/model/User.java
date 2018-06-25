@@ -14,7 +14,19 @@ public class User implements Serializable
     {
         this.name = name;
         this.color = color;
-        
+    }
+
+    public User() {
+        this.name = "";
+        this.color = Color.BLACK;
+    }
+
+    public boolean isValid() {
+        if(name.equals("") || color.equals(Color.BLACK)) {
+            return false;
+        }
+
+        return true;
     }
 
     public String getName()

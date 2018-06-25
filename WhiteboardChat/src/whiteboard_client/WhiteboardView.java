@@ -1,5 +1,7 @@
 package whiteboard_client;
 
+import shared.messages.InitMessage;
+import shared.messages.Message;
 import shared.messages.client.DrawingMessage;
 import shared.messages.server.UsersMessage;
 import shared.model.User;
@@ -13,6 +15,7 @@ import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.List;
 
 public class WhiteboardView extends JFrame implements Observer{
     private JTextField userInputField;
@@ -21,17 +24,17 @@ public class WhiteboardView extends JFrame implements Observer{
 
     /**
      * Instantiate a WhiteboardView
-     * @param user The user connecting to the server
      */
-    private WhiteboardView(User user) {
-        user = userOptionsDialog();
-        setBounds(100, 100, 500, 500);
-        setLayout(new BorderLayout());
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    private WhiteboardView() {
+        // Configuration dialogs
+        User user = userOptionsDialog();
+        ServerConfiguration config = serverConfigDialog();
 
-        WhiteboardClient client = new WhiteboardClient("localhost", 1337, user);
+        // Define the client
+        WhiteboardClient client = new WhiteboardClient(config, user);
         client.addObserver(this);
 
+        // Set the GUI stuff
         initGUI(client.getUser(), client);
     }
 
@@ -40,11 +43,7 @@ public class WhiteboardView extends JFrame implements Observer{
      * @param args it's the arguments
      */
     public static void main(String[] args) {
-        String name = "Gyro Zeppeli";
-        Color color = Color.RED;
-
-        User user = new User(name, color);
-        new WhiteboardView(user);
+        new WhiteboardView();
     }
 
     /**
@@ -53,19 +52,19 @@ public class WhiteboardView extends JFrame implements Observer{
      * @param client The client instance to 'talk' to.
      */
     private void initGUI(User user, WhiteboardClient client) {
-        setTitle(String.format("Whiteboard Client - %s", user.getName()));
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowController(client));
+        initFrame(client, user);
         initWhiteboard(client);
-        addUserList();
-        addInputs(client);
+        initUserList();
+        initInputs(client);
         pack();
         setVisible(true);
     }
 
     @Override
     public void update(Observable obs, Object obj) {
-        if(obj instanceof DrawingMessage) {
+        if(obj instanceof InitMessage) {
+            handleInitMessage((InitMessage)obj);
+        } else if(obj instanceof DrawingMessage) {
             handleDrawingMessage((DrawingMessage)obj);
         } else if(obj instanceof UsersMessage) {
             handleUsersMessage((UsersMessage)obj);
@@ -113,6 +112,17 @@ public class WhiteboardView extends JFrame implements Observer{
         repaint();
     }
 
+    private void handleInitMessage(InitMessage message) {
+        System.out.println("Init loop");
+        for(Message m : message.getMessages()) {
+            if(!(m instanceof DrawingMessage)) {
+                continue;
+            }
+
+            handleDrawingMessage((DrawingMessage)m);
+        }
+    }
+
     /**
      * Clears the list of connected users and replaces it with the updated version.
      * @param message The UsersMessage containing the required data.
@@ -145,10 +155,10 @@ public class WhiteboardView extends JFrame implements Observer{
     }
 
     /**
-     * Adds the inputs required to
-     * @param client
+     * Adds the inputs required to add things to the Whiteboard.
+     * @param client The client instance being used.
      */
-    private void addInputs(WhiteboardClient client) {
+    private void initInputs(WhiteboardClient client) {
         JPanel inputPanel = new JPanel();
         InputController controller = new InputController(client);
 
@@ -180,16 +190,18 @@ public class WhiteboardView extends JFrame implements Observer{
         add(inputPanel, BorderLayout.SOUTH);
     }
 
-    private void addUserList() {
+    /**
+     * Add the list of users.
+     */
+    private void initUserList() {
         connectedUsers = new JPanel(new GridBagLayout());
-//        GridBagConstraints gbc = new GridBagConstraints();
-//        gbc.gridwidth = GridBagConstraints.REMAINDER;
-//        gbc.weightx = 1;
-//        gbc.weighty = 1;
-//        connectedUsers.add(new JPanel(), gbc);
         add(new JScrollPane(connectedUsers), BorderLayout.EAST);
     }
 
+    /**
+     * Add the actual whiteboard.
+     * @param client The client instance being used.
+     */
     private void initWhiteboard(WhiteboardClient client) {
         whiteboard = new JPanel();
         whiteboard.setLayout(null);
@@ -198,13 +210,31 @@ public class WhiteboardView extends JFrame implements Observer{
         add(whiteboard, BorderLayout.CENTER);
     }
 
-    private User userOptionsDialog() {
-        String name = "";
+    /**
+     * Initialize the JFrame, which contains all of the other JComponents.
+     * @param client The client instance being used.
+     * @param user The user connecting to the server.
+     */
+    private void initFrame(WhiteboardClient client, User user) {
+        setBounds(100, 100, 500, 500);
+        setLayout(new BorderLayout());
+        setTitle(String.format("Whiteboard Client - %s", user.getName()));
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowController(client));
+    }
 
-        while(name.equals("")) {
+    /**
+     * Dialog to allow a user to set their name and color.
+     * @return The User object containing the entered values.
+     */
+    private User userOptionsDialog() {
+        User user = new User();
+
+        // Keep reopening the dialog if the entered information is invalid
+        while(!user.isValid()) {
             JTextField username = new JTextField();
             JColorChooser color = new JColorChooser();
-            final JComponent[] fields = new JComponent[]{
+            final JComponent[] fields = new JComponent[] {
                     new JLabel("Username"),
                     username,
                     new JLabel("Color"),
@@ -212,26 +242,66 @@ public class WhiteboardView extends JFrame implements Observer{
             };
             int result = JOptionPane.showConfirmDialog(null, fields, "User options", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION) {
-                name = username.getText();
-                if(!name.equals("")) {
-                    return new User(name, color.getColor());
-                }
+                user.setName(username.getText());
+                user.setColor(color.getColor());
             } else {
                 System.exit(0);
             }
         }
 
-        return null;
+        return user;
     }
 
+    /**
+     * Dialog to allow a user to enter the information of the server they're connecting to.
+     * @return The ServerConfiguration object containing the entered values.
+     */
+    private ServerConfiguration serverConfigDialog() {
+        ServerConfiguration config = new ServerConfiguration();
+
+        // Keep reopening the dialog if the entered information is invalid
+        while(!config.isValid()) {
+            JTextField host = new JTextField();
+            JTextField port = new JTextField();
+            final JComponent[] fields = new JComponent[] {
+                    new JLabel("Host"),
+                    host,
+                    new JLabel("Port"),
+                    port
+            };
+            int result = JOptionPane.showConfirmDialog(null, fields, "Server configuration", JOptionPane.OK_CANCEL_OPTION);
+            if(result == JOptionPane.OK_OPTION) {
+                config.setHost(host.getText());
+                config.setPort(port.getText());
+            } else {
+                System.exit(0);
+            }
+        }
+
+        return config;
+    }
+
+    /**
+     * Adjust the values of a point so that they anchor at the center of an object, instead of the top-left.
+     * @param p The point being adjusted.
+     * @param d The dimension of the something.
+     * @return The adjusted point.
+     */
     private Point adjustCenter(Point p, Dimension d) {
         return new Point((int)(p.getX() - (d.width * 0.5)), (int)(p.getY() - (d.height * 0.5)));
     }
 
+    /**
+     * Retrieve the input from the text field.
+     * @return The string present in the text field.
+     */
     public String getUserInput() {
         return userInputField.getText();
     }
 
+    /**
+     * Empties the text field.
+     */
     public void clearUserInput() {
         userInputField.setText("");
         userInputField.requestFocus();

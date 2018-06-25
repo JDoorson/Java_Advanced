@@ -1,5 +1,6 @@
 package whiteboard_server;
 
+import shared.messages.InitMessage;
 import shared.messages.Message;
 import shared.messages.client.DrawingMessage;
 import shared.messages.server.UsersMessage;
@@ -12,6 +13,7 @@ import java.util.List;
 
 public class WhiteboardServer {
     private List<ClientHandler> clients = new ArrayList<>();
+    private List<Message> messages = new ArrayList<>();
 
     /**
      * Instantiate a WhiteboardServer.
@@ -58,8 +60,17 @@ public class WhiteboardServer {
         messageClients(new UsersMessage(users));
     }
 
+    public void sendWhiteboard(ClientHandler client) {
+        System.out.println(String.format("Sending init list containing %d messages", messages.size()));
+        client.send(new InitMessage(messages));
+    }
+
     public void disconnectClient(ClientHandler client) {
         clients.remove(client);
+    }
+
+    public void addMessage(Message m) {
+        messages.add(m);
     }
 
     public static void main(String[] args) {

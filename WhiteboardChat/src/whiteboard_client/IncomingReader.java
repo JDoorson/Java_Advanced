@@ -1,5 +1,6 @@
 package whiteboard_client;
 
+import shared.messages.InitMessage;
 import shared.messages.Message;
 
 import java.io.IOException;

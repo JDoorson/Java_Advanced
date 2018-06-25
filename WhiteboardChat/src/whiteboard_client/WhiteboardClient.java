@@ -21,13 +21,12 @@ public class WhiteboardClient extends Observable {
 
     /**
      * Instantiate a WhiteboardClient
-     * @param address Server address to connect to
-     * @param port Server port to connect to
+     * @param config Object containing the data for a server connection
      * @param user The user connected
      */
-    public WhiteboardClient(String address, int port, User user) {
+    WhiteboardClient(ServerConfiguration config, User user) {
         this.user = user;
-        connect(address, port);
+        connect(config);
 
         sendMessage(new InitialMessage(user));
 
@@ -36,14 +35,13 @@ public class WhiteboardClient extends Observable {
 
     /**
      * Connect to a server
-     * @param address Server address
-     * @param port Server port
+     * @param config Object containing the data for a server connection
      */
-    private void connect(String address, int port) {
+    private void connect(ServerConfiguration config) {
         try {
-            socket = new Socket(address, port);
+            socket = new Socket(config.getHost(), config.getPort());
             oos = new ObjectOutputStream(socket.getOutputStream());
-            System.out.println(String.format("Network connection started on %s:%d", address, port));
+            System.out.println(String.format("Network connection started on %s:%d", config.getHost(), config.getPort()));
         } catch(IOException e) {
             e.printStackTrace();
         }

@@ -48,11 +48,13 @@ public class ClientHandler implements Runnable{
                     InitialMessage m = (InitialMessage)message;
                     user = m.getSender();
                     server.sendUserUpdate();
+                    server.sendWhiteboard(this);
                 } else if(message instanceof StopMessage) {
                     server.disconnectClient(this);
                     server.sendUserUpdate();
                 } else {
                     server.messageClients((Message) message);
+                    server.addMessage((Message)message);
                 }
             }
         } catch(ClassNotFoundException | IOException e) {
