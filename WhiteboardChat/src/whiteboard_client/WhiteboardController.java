@@ -2,6 +2,7 @@ package whiteboard_client;
 
 import shared.messages.client.DrawingMessage;
 import shared.model.drawing.Line;
+import shared.model.drawing.Ring;
 import shared.model.drawing.Stamp;
 import shared.model.drawing.TextDrawing;
 
@@ -37,6 +38,11 @@ public class WhiteboardController implements MouseListener {
             case SMILEY:
             case SOLID:
                 client.sendMessage(new DrawingMessage(client.getUser(), new Stamp(p, client.getInputOption().getStamp())));
+                break;
+            case RING:
+                Ring r = client.getRing();
+                r.setLocation(p);
+                client.sendMessage(new DrawingMessage(client.getUser(), r));
                 break;
             default:
                 break;

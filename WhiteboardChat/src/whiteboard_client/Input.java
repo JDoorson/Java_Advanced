@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 
 public enum Input {
     TEXT(""),
+    RING(""),
     SQUARE("/resources/blokje.stp"),
     CIRCLE("/resources/cirkel.stp"),
     SPHERE("/resources/rondje.stp"),

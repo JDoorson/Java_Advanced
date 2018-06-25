@@ -7,20 +7,26 @@ import java.awt.event.FocusListener;
 
 public class InputController implements ActionListener, FocusListener {
     private WhiteboardClient client;
+    private WhiteboardView view;
 
-    InputController(WhiteboardClient client) {
+    InputController(WhiteboardClient client, WhiteboardView view) {
         this.client = client;
+        this.view = view;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!(e.getSource() instanceof StampButton)) {
+        if (!(e.getSource() instanceof InputButton)) {
             client.setInputOption(Input.TEXT);
             return;
         }
 
-        StampButton btn = (StampButton) e.getSource();
-        client.setInputOption(btn.getInput());
+        InputButton btn = (InputButton) e.getSource();
+        Input inputOption = btn.getInput();
+        if (inputOption.equals(Input.RING)) {
+            client.setRing(view.ringDialog());
+        }
+        client.setInputOption(inputOption);
     }
 
     @Override

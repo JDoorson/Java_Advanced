@@ -1,7 +1,7 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="WhiteboardClient:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/WhiteboardClient_jar</output-path>
-    <root id="archive" name="JamalDoorson_Vraag0_Client.jar">
+    <root id="archive" name="JamalDoorson_Vraag1_Client.jar">
       <element id="directory" name="META-INF">
         <element id="file-copy" path="$PROJECT_DIR$/src/resources/manifests/client/META-INF/MANIFEST.MF" />
       </element>

@@ -4,6 +4,7 @@ import shared.messages.Message;
 import shared.messages.client.InitialMessage;
 import shared.messages.client.StopMessage;
 import shared.model.User;
+import shared.model.drawing.Ring;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -15,6 +16,7 @@ public class WhiteboardClient extends Observable {
     private Socket socket;
     private ObjectOutputStream oos;
     private Input inputOption = Input.TEXT;
+    private Ring ring = new Ring(null, 5, 5);
 
     /**
      * Instantiate a WhiteboardClient
@@ -91,5 +93,13 @@ public class WhiteboardClient extends Observable {
 
     public void setInputOption(Input input) {
         this.inputOption = input;
+    }
+
+    public void setRing(Ring ring) {
+        this.ring = ring;
+    }
+
+    public Ring getRing() {
+        return ring;
     }
 }

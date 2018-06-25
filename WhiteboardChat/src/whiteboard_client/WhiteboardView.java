@@ -5,10 +5,7 @@ import shared.messages.Message;
 import shared.messages.client.DrawingMessage;
 import shared.messages.server.UsersMessage;
 import shared.model.User;
-import shared.model.drawing.Drawing;
-import shared.model.drawing.Line;
-import shared.model.drawing.Stamp;
-import shared.model.drawing.TextDrawing;
+import shared.model.drawing.*;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
@@ -99,7 +96,7 @@ public class WhiteboardView extends JFrame implements Observer {
             g.drawLine((int) l.getLocation().getX(), (int) l.getLocation().getY(), (int) l.getEnd().getX(), (int) l.getEnd().getY());
             System.out.println(String.format("Received %s -- Start: (%f,%f) -- End: (%f,%f)", message.getClass().getSimpleName(), l.getLocation().getX(), l.getLocation().getY(), l.getEnd().getX(), l.getEnd().getY()));
         } else if (drawing instanceof Stamp) {
-            Stamp s = (Stamp) message.getDrawing();
+            Stamp s = (Stamp)drawing;
             boolean[][] stamp = s.getStamp();
             g.setColor(message.getSender().getColor());
             for (int y = 0; y < stamp.length; y++) {
@@ -108,6 +105,16 @@ public class WhiteboardView extends JFrame implements Observer {
                         g.fillRect( drawing.getLocation().x + y,drawing.getLocation().y + x, 1, 1);
                     }
                 }
+            }
+        } else if(drawing instanceof Ring) {
+            Ring r = (Ring)drawing;
+            int xPos = (int)r.getLocation().getX();
+            int yPos = (int)r.getLocation().getY();
+            int diameter = r.getDiameter();
+            System.out.println(String.format("Ring data: (%d,%d) -- %d", xPos, yPos, diameter));
+            g.setColor(message.getSender().getColor());
+            for(int i = 0; i < r.getSize(); i++) {
+                g.drawOval(xPos, yPos, diameter + i, diameter + i);
             }
         }
     }
@@ -160,27 +167,31 @@ public class WhiteboardView extends JFrame implements Observer {
      */
     private void initInputs(WhiteboardClient client) {
         JPanel inputPanel = new JPanel();
-        InputController controller = new InputController(client);
+        InputController controller = new InputController(client, this);
 
-        StampButton square = new StampButton("Square", "src/resources/blokje.stp", Input.SQUARE);
+        InputButton square = new InputButton("Square", Input.SQUARE);
         square.addActionListener(controller);
         inputPanel.add(square);
 
-        StampButton circle = new StampButton("Circle", "src/resources/cirkel.stp", Input.CIRCLE);
+        InputButton circle = new InputButton("Circle", Input.CIRCLE);
         circle.addActionListener(controller);
         inputPanel.add(circle);
 
-        StampButton sphere = new StampButton("Sphere", "src/resources/rondje.stp", Input.SPHERE);
+        InputButton sphere = new InputButton("Sphere", Input.SPHERE);
         sphere.addActionListener(controller);
         inputPanel.add(sphere);
 
-        StampButton smiley = new StampButton("Smiley", "src/resources/smiley.stp", Input.SMILEY);
+        InputButton smiley = new InputButton("Smiley", Input.SMILEY);
         smiley.addActionListener(controller);
         inputPanel.add(smiley);
 
-        StampButton solid = new StampButton("Solid", "src/resources/solid.stp", Input.SOLID);
+        InputButton solid = new InputButton("Solid", Input.SOLID);
         solid.addActionListener(controller);
         inputPanel.add(solid);
+
+        InputButton ring = new InputButton("Ring", Input.RING);
+        ring.addActionListener(controller);
+        inputPanel.add(ring);
 
         // Text input setup
         userInputField = new JTextField(20);
@@ -305,6 +316,35 @@ public class WhiteboardView extends JFrame implements Observer {
         }
 
         return config;
+    }
+
+    Ring ringDialog() {
+        int diameter = 0;
+        int size = 0;
+
+        while(diameter <= 0 || size <= 0) {
+            JTextField diameterField = new JTextField();
+            JTextField sizeField = new JTextField();
+            final JComponent[] fields = new JComponent[] {
+                    new JLabel("Diameter"),
+                    diameterField,
+                    new JLabel("Size"),
+                    sizeField
+            };
+            int result = JOptionPane.showConfirmDialog(null, fields, "Ring configuration", JOptionPane.OK_CANCEL_OPTION);
+            if(result == JOptionPane.OK_OPTION) {
+                try {
+                    diameter = Integer.parseInt(diameterField.getText());
+                    size = Integer.parseInt(sizeField.getText());
+                } catch(NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                return new Ring();
+            }
+        }
+
+        return new Ring(diameter, size);
     }
 
     /**
