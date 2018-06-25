@@ -13,6 +13,7 @@ public enum Input {
     SOLID("src/resources/solid.stp");
 
     private final String imagePath;
+
     Input(String imagePath) {
         this.imagePath = imagePath;
     }
@@ -21,9 +22,9 @@ public enum Input {
         boolean[][] stamp = new boolean[0][0];
         try {
             ObjectInputStream ois = new ObjectInputStream(new FileInputStream(imagePath));
-            stamp = (boolean[][])ois.readObject();
+            stamp = (boolean[][]) ois.readObject();
             ois.close();
-        } catch(ClassNotFoundException | IOException e) {
+        } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
         }
 

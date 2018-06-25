@@ -4,18 +4,18 @@ public class ServerConfiguration {
     private String host;
     private int port;
 
-    public ServerConfiguration(String host, int port) {
+    ServerConfiguration(String host, int port) {
         this.host = host;
         this.port = port;
     }
 
-    public ServerConfiguration() {
+    ServerConfiguration() {
         this.host = "";
         this.port = -1;
     }
 
     public boolean isValid() {
-        if(host.equals("") || port < 0) {
+        if (host.equals("") || port < 0) {
             return false;
         }
 
@@ -41,7 +41,7 @@ public class ServerConfiguration {
     public void setPort(String port) {
         try {
             this.port = Integer.parseInt(port);
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             this.port = -1;
         }
     }

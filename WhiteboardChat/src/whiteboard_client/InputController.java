@@ -14,12 +14,12 @@ public class InputController implements ActionListener, FocusListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(!(e.getSource() instanceof StampButton)) {
+        if (!(e.getSource() instanceof StampButton)) {
             client.setInputOption(Input.TEXT);
             return;
         }
 
-        StampButton btn = (StampButton)e.getSource();
+        StampButton btn = (StampButton) e.getSource();
         client.setInputOption(btn.getInput());
     }
 

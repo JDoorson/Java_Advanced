@@ -9,16 +9,19 @@ public class User implements Serializable
 
     private String name;
     private Color color;
+    private boolean isHuman;
 
     public User( String name, Color color )
     {
         this.name = name;
         this.color = color;
+        this.isHuman = true;
     }
 
     public User() {
         this.name = "";
         this.color = Color.BLACK;
+        this.isHuman = true;
     }
 
     public boolean isValid() {
@@ -47,5 +50,13 @@ public class User implements Serializable
     public void setColor( Color color )
     {
         this.color = color;
+    }
+
+    public boolean isHuman() {
+        return isHuman;
+    }
+
+    public void setHuman(boolean isHuman) {
+        this.isHuman = isHuman;
     }
 }

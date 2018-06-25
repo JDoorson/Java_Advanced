@@ -6,7 +6,7 @@ import java.awt.*;
 public class LinePanel extends JPanel {
     private int startX, startY, endX, endY;
 
-    public LinePanel(int startX, int startY, int endX, int endY) {
+    LinePanel(int startX, int startY, int endX, int endY) {
         this.startX = startX;
         this.startY = startY;
         this.endX = endX;

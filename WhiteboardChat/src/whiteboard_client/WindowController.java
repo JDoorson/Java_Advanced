@@ -6,12 +6,13 @@ import java.awt.event.WindowEvent;
 public class WindowController extends WindowAdapter {
     private WhiteboardClient client;
 
-    public WindowController(WhiteboardClient client) {
+    WindowController(WhiteboardClient client) {
         this.client = client;
     }
 
     @Override
     public void windowClosing(WindowEvent e) {
         client.disconnect();
+        System.exit(0);
     }
 }

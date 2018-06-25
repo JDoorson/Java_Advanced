@@ -12,9 +12,9 @@ public class StampButton extends JButton {
     StampButton(String name, String imagePath, Input input) {
         try {
             ObjectInputStream ois = new ObjectInputStream(new FileInputStream(imagePath));
-            stamp = (boolean[][])ois.readObject();
+            stamp = (boolean[][]) ois.readObject();
             ois.close();
-        } catch(ClassNotFoundException | IOException e) {
+        } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
         }
 

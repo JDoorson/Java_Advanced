@@ -2,7 +2,6 @@ package whiteboard_server;
 
 import shared.messages.InitMessage;
 import shared.messages.Message;
-import shared.messages.client.DrawingMessage;
 import shared.messages.server.UsersMessage;
 import shared.model.User;
 
@@ -17,24 +16,25 @@ public class WhiteboardServer {
 
     /**
      * Instantiate a WhiteboardServer.
+     *
      * @param port The port to listen to.
      */
-    public WhiteboardServer(int port) {
+    private WhiteboardServer(int port) {
         ServerSocket serverSocket = null;
         try {
             serverSocket = new ServerSocket(port);
             System.out.println(String.format("Server started on port %d", port));
 
-            while(true) {
+            while (true) {
                 clients.add(new ClientHandler(serverSocket.accept(), this));
             }
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         } finally {
             if (serverSocket != null) {
                 try {
                     serverSocket.close();
-                } catch(IOException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
@@ -43,18 +43,19 @@ public class WhiteboardServer {
 
     /**
      * Send a message to all connected clients.
+     *
      * @param message The message to be sent.
      */
     public void messageClients(Message message) {
         System.out.println(String.format("Sending: <%s> to %d clients", message.toString(), clients.size()));
-        for(ClientHandler client : clients) {
+        for (ClientHandler client : clients) {
             client.send(message);
         }
     }
 
     public void sendUserUpdate() {
         List<User> users = new ArrayList<>();
-        for(ClientHandler c : clients) {
+        for (ClientHandler c : clients) {
             users.add(c.getUser());
         }
         messageClients(new UsersMessage(users));
@@ -74,6 +75,14 @@ public class WhiteboardServer {
     }
 
     public static void main(String[] args) {
-        new WhiteboardServer(1337);
+        int port = 0;
+        try {
+            port = Integer.parseInt(args[0]);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            System.out.println("Invalid port entered, exiting.");
+            System.exit(0);
+        }
+        new WhiteboardServer(port);
     }
 }

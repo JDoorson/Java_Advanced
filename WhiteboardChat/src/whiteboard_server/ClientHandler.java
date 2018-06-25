@@ -10,8 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class ClientHandler implements Runnable{
-    private Socket socket;
+public class ClientHandler implements Runnable {
     private ObjectInputStream reader;
     private ObjectOutputStream writer;
     private WhiteboardServer server;
@@ -19,11 +18,11 @@ public class ClientHandler implements Runnable{
 
     /**
      * Instantiate a ClientHandler.
+     *
      * @param socket The socket the client is connected to.
      * @param server The server instance.
      */
     public ClientHandler(Socket socket, WhiteboardServer server) {
-        this.socket = socket;
         this.server = server;
         try {
             reader = new ObjectInputStream(socket.getInputStream());
@@ -33,7 +32,7 @@ public class ClientHandler implements Runnable{
             t.start();
 
             System.out.println("A new client has connected");
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -42,35 +41,36 @@ public class ClientHandler implements Runnable{
     public void run() {
         Object message;
         try {
-            while((message = reader.readObject()) != null) {
+            while ((message = reader.readObject()) != null) {
                 System.out.println(String.format("Received: %s", message));
-                if(message instanceof InitialMessage) {
-                    InitialMessage m = (InitialMessage)message;
+                if (message instanceof InitialMessage) {
+                    InitialMessage m = (InitialMessage) message;
                     user = m.getSender();
                     server.sendUserUpdate();
                     server.sendWhiteboard(this);
-                } else if(message instanceof StopMessage) {
+                } else if (message instanceof StopMessage) {
                     server.disconnectClient(this);
                     server.sendUserUpdate();
                 } else {
                     server.messageClients((Message) message);
-                    server.addMessage((Message)message);
+                    server.addMessage((Message) message);
                 }
             }
-        } catch(ClassNotFoundException | IOException e) {
+        } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
         }
     }
 
     /**
      * Send a message to the client.
+     *
      * @param message The message to be sent.
      */
     public void send(Message message) {
         try {
             writer.writeObject(message);
             writer.flush();
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

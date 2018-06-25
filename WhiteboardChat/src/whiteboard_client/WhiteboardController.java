@@ -9,7 +9,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class WhiteboardController implements MouseListener{
+public class WhiteboardController implements MouseListener {
     private WhiteboardClient client;
     private WhiteboardView view;
     private Point lineStart;
@@ -21,13 +21,13 @@ public class WhiteboardController implements MouseListener{
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if(!(e.getButton() == MouseEvent.BUTTON1)) {
+        if (!(e.getButton() == MouseEvent.BUTTON1)) {
             return;
         }
 
         Point p = new Point(e.getX(), e.getY());
 
-        switch(client.getInputOption()) {
+        switch (client.getInputOption()) {
             case TEXT:
                 client.sendMessage(new DrawingMessage(client.getUser(), new TextDrawing(p, view.getUserInput())));
                 break;
@@ -46,16 +46,16 @@ public class WhiteboardController implements MouseListener{
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if(e.getButton() == MouseEvent.BUTTON1) {
+        if (e.getButton() == MouseEvent.BUTTON1) {
             lineStart = new Point(e.getX(), e.getY());
         }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if(e.getButton() == MouseEvent.BUTTON1) {
+        if (e.getButton() == MouseEvent.BUTTON1) {
             Point lineEnd = new Point(e.getX(), e.getY());
-            if(!lineStart.equals(lineEnd)) {
+            if (!lineStart.equals(lineEnd)) {
                 client.sendMessage(new DrawingMessage(client.getUser(), new Line(lineStart, lineEnd)));
             }
         }

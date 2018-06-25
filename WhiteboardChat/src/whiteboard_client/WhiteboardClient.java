@@ -21,8 +21,9 @@ public class WhiteboardClient extends Observable {
 
     /**
      * Instantiate a WhiteboardClient
+     *
      * @param config Object containing the data for a server connection
-     * @param user The user connected
+     * @param user   The user connected
      */
     WhiteboardClient(ServerConfiguration config, User user) {
         this.user = user;
@@ -35,6 +36,7 @@ public class WhiteboardClient extends Observable {
 
     /**
      * Connect to a server
+     *
      * @param config Object containing the data for a server connection
      */
     private void connect(ServerConfiguration config) {
@@ -42,7 +44,7 @@ public class WhiteboardClient extends Observable {
             socket = new Socket(config.getHost(), config.getPort());
             oos = new ObjectOutputStream(socket.getOutputStream());
             System.out.println(String.format("Network connection started on %s:%d", config.getHost(), config.getPort()));
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -51,26 +53,28 @@ public class WhiteboardClient extends Observable {
         sendMessage(new StopMessage(user));
         try {
             socket.close();
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     /**
      * Send a message to the server
+     *
      * @param message The message being sent
      */
     public void sendMessage(Message message) {
         try {
             oos.writeObject(message);
             oos.flush();
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     /**
      * Handle a ClientMessage received through the server.
+     *
      * @param message The message to be passed on to all observers
      */
     public void handleIncomingMessage(Message message) {

@@ -1,6 +1,5 @@
 package whiteboard_client;
 
-import shared.messages.InitMessage;
 import shared.messages.Message;
 
 import java.io.IOException;
@@ -13,14 +12,15 @@ public class IncomingReader implements Runnable {
 
     /**
      * Instantiate an IncomingReader
+     *
      * @param socket The socket to retrieve input from
      * @param client The client to handle the input
      */
-    public IncomingReader(Socket socket, WhiteboardClient client) {
+    IncomingReader(Socket socket, WhiteboardClient client) {
         this.client = client;
         try {
             reader = new ObjectInputStream(socket.getInputStream());
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -33,15 +33,15 @@ public class IncomingReader implements Runnable {
         Object o;
 
         try {
-            while((o = reader.readObject()) != null) {
-                if(o instanceof Message) {
-                    Message message = (Message)o;
+            while ((o = reader.readObject()) != null) {
+                if (o instanceof Message) {
+                    Message message = (Message) o;
                     client.handleIncomingMessage(message);
                 } else {
                     System.out.println(String.format("Illegal message received: %s", o.getClass().getSimpleName()));
                 }
             }
-        } catch(ClassNotFoundException | IOException e) {
+        } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
         }
     }
