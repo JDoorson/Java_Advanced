@@ -1,5 +1,9 @@
 package whiteboard_client;
 
+import shared.messages.client.UserMessage;
+import shared.model.User;
+
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -23,6 +27,18 @@ public class InputController implements ActionListener, FocusListener {
 
         InputButton btn = (InputButton) e.getSource();
         Input inputOption = btn.getInput();
+
+        if(inputOption.equals((Input.USER))) {
+            Color newColor = view.changeColorDialog();
+            if(newColor == null) {
+                return;
+            }
+            User u = new User(client.getUser().getName(), newColor);
+            client.setUser(u);
+            client.sendMessage(new UserMessage(u));
+            return;
+        }
+
         if (inputOption.equals(Input.RING)) {
             client.setRing(view.ringDialog());
         }

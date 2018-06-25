@@ -47,7 +47,7 @@ public class WhiteboardClient extends Observable {
         }
     }
 
-    public void disconnect() {
+    void disconnect() {
         sendMessage(new StopMessage(user));
         try {
             socket.close();
@@ -61,7 +61,7 @@ public class WhiteboardClient extends Observable {
      *
      * @param message The message being sent
      */
-    public void sendMessage(Message message) {
+    void sendMessage(Message message) {
         try {
             oos.writeObject(message);
             oos.flush();
@@ -75,7 +75,7 @@ public class WhiteboardClient extends Observable {
      *
      * @param message The message to be passed on to all observers
      */
-    public void handleIncomingMessage(Message message) {
+    void handleIncomingMessage(Message message) {
         setChanged();
         notifyObservers(message);
     }
@@ -87,19 +87,23 @@ public class WhiteboardClient extends Observable {
         return user;
     }
 
-    public Input getInputOption() {
+    Input getInputOption() {
         return inputOption;
     }
 
-    public void setInputOption(Input input) {
+    void setInputOption(Input input) {
         this.inputOption = input;
     }
 
-    public void setRing(Ring ring) {
+    void setRing(Ring ring) {
         this.ring = ring;
     }
 
-    public Ring getRing() {
+    Ring getRing() {
         return ring;
+    }
+
+    void setUser(User user) {
+        this.user = user;
     }
 }

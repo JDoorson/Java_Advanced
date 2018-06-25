@@ -193,6 +193,10 @@ public class WhiteboardView extends JFrame implements Observer {
         ring.addActionListener(controller);
         inputPanel.add(ring);
 
+        InputButton userColor = new InputButton("Change color", Input.USER);
+        userColor.addActionListener(controller);
+        inputPanel.add(userColor);
+
         // Text input setup
         userInputField = new JTextField(20);
         userInputField.addActionListener(controller);
@@ -286,6 +290,28 @@ public class WhiteboardView extends JFrame implements Observer {
         }
 
         return user;
+    }
+
+    /**
+     * Dialog to allow a user to set their name and color.
+     *
+     * @return The User object containing the entered values.
+     */
+    Color changeColorDialog() {
+        Color c;
+        JColorChooser color = new JColorChooser();
+        final JComponent[] fields = new JComponent[]{
+                new JLabel("Color"),
+                color
+        };
+        int result = JOptionPane.showConfirmDialog(null, fields, "User options", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            c = color.getColor();
+        } else {
+            return null;
+        }
+
+        return c;
     }
 
     /**

@@ -3,6 +3,7 @@ package whiteboard_server;
 import shared.messages.Message;
 import shared.messages.client.InitialMessage;
 import shared.messages.client.StopMessage;
+import shared.messages.client.UserMessage;
 import shared.model.User;
 
 import java.io.IOException;
@@ -47,6 +48,10 @@ public class ClientHandler implements Runnable {
                     server.sendWhiteboard(this);
                 } else if (message instanceof StopMessage) {
                     server.disconnectClient(this);
+                    server.sendUserUpdate();
+                } else if(message instanceof UserMessage) {
+                    UserMessage m = (UserMessage)message;
+                    user = m.getSender();
                     server.sendUserUpdate();
                 } else {
                     server.messageClients((Message) message);

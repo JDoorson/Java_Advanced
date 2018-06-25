@@ -75,7 +75,7 @@ public class WhiteboardServer {
     public static void main(String[] args) {
         int port = 0;
         try {
-            port = 9999;//Integer.parseInt(args[0]);
+            port = Integer.parseInt(args[0]);
         } catch (NumberFormatException e) {
             e.printStackTrace();
             System.out.println("Invalid port entered, exiting.");
